@@ -167,6 +167,25 @@ h1{font-size:34px;letter-spacing:-.6px;margin-top:6px;line-height:1.15}
 .fin .nowbtns{margin-top:22px}
 .fin .sub{color:var(--mute);font-size:13px;margin-top:18px;line-height:1.45}
 @media(max-width:400px){.wrap{padding:0 14px}h1{font-size:30px}.cd{font-size:38px}.composer{padding:12px 10px 10px 14px}.dock{padding-left:14px;padding-right:14px}}
+@media(min-width:960px){
+ .wrap{max-width:1120px;padding:0 32px}
+ header{padding-top:44px;padding-bottom:20px}
+ h1{font-size:42px}
+ .tabs{max-width:320px}
+ body{padding-bottom:48px}
+ #vToday:not(.hide){display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:36px;align-items:start}
+ .colL{position:sticky;top:20px}
+ .colR{min-width:0}
+ #vWeek:not(.hide){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;column-gap:24px;align-items:start}
+ #vWeek .days{grid-column:1/-1;max-width:560px}
+ #dayCard{grid-column:1;grid-row:2/span 4}
+ #pianoCard,#studyCard,#vWeek>.card:last-child{grid-column:2}
+ .dock.inline{position:static;background:transparent;border:0;padding:0;margin-top:-8px}
+ .dock.inline .in{max-width:none}
+ .hint{text-align:start}
+ .row{grid-template-columns:56px 1fr}
+ .gap{grid-template-columns:56px 1fr}
+}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,119,87,.5)}70%{box-shadow:0 0 0 8px rgba(217,119,87,0)}100%{box-shadow:0 0 0 0 rgba(217,119,87,0)}}
@@ -176,6 +195,7 @@ h1{font-size:34px;letter-spacing:-.6px;margin-top:6px;line-height:1.15}
 <div class="tabs"><button id="tbT" onclick="setTab('today')" data-t="Today">Today</button><button id="tbW" onclick="setTab('week')" data-t="Week">Week</button></div>
 
 <div id="vToday">
+<div class="colL" id="colL">
 <section class="now" id="nowc"></section>
 <div class="composer">
 <div class="inrow"><input id="nm" placeholder="Add something for today" data-tp="Add something for today" autocomplete="off" enterkeyhint="done"><button class="send" onclick="add()" aria-label="Add task"><i data-i="up"></i></button></div>
@@ -186,10 +206,13 @@ h1{font-size:34px;letter-spacing:-.6px;margin-top:6px;line-height:1.15}
 </div>
 <div class="smart" id="smart"><i data-i="spark"></i><div class="t"><b data-t="Let Claude plan this">Let Claude plan this</b><br><span data-t="It splits your session into timed blocks.">It splits your session into timed blocks.</span></div><a class="btn acc" id="askA" href="https://claude.ai/new" target="_blank" rel="noopener" onclick="askClaude()" data-t="Ask Claude">Ask Claude</a></div>
 </div>
+</div>
+<div class="colR">
 <div class="label" id="lbl"></div>
 <div id="list"></div>
 <div class="skipped" id="skp"></div>
 <p class="hint" id="hint" data-t="Swipe a task right to finish it, or left to skip it today.">Swipe a task right to finish it, or left to skip it today.</p>
+</div>
 </div>
 
 <div id="vWeek" class="hide">
@@ -673,6 +696,10 @@ async function authForm(mode){const login=mode==='login';
 async function logout(){if(await modal({icon:'users',title:t('Log out?'),text:t('Your schedule stays on this device, but it stops syncing.'),yes:t('Log out')})){await SB.auth.signOut();USER=null;openSettings()}}
 if(!IS_NATIVE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 
+function placeDock(){const d=g('dock');if(!d)return;const wide=matchMedia('(min-width:960px)').matches;
+ if(wide&&d.parentElement!==g('colL')){g('colL').appendChild(d);d.classList.add('inline')}
+ else if(!wide&&d.parentElement!==document.body){document.body.appendChild(d);d.classList.remove('inline')}}
+placeDock();addEventListener('resize',placeDock);
 function applyTheme(){const r=document.documentElement;if(S.theme==='system')r.removeAttribute('data-theme');else r.setAttribute('data-theme',S.theme);
  const dark=S.theme==='dark'||(S.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
  document.querySelectorAll('meta[name=theme-color]').forEach(m=>m.setAttribute('content',dark?'#161615':'#F4F3EE'))}
