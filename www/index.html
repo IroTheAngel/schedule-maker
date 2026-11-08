@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#F4F3EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)"><title>Schedule Maker</title>
+<meta name="theme-color" content="#F4F3EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)"><title>Schedule Maker</title><link rel="manifest" href="manifest.json"><link rel="icon" href="icons/icon-192.png">
 <style>
 :root{color-scheme:light dark;--bg:#F4F3EE;--card:#FFFFFF;--line:#E4E1D8;--text:#1F1E1D;--mute:#6F6D66;--acc:#C15F3C;--soft:#EBE9E1;--tint:#F7EBE5;--bad:#B84A3A;--green:#5E8466;--r1:8px;--r2:12px;--r3:16px;--r4:24px;--shadow:0 1px 2px rgba(31,30,29,.05),0 6px 20px rgba(31,30,29,.06);
 --c-piano:#C15F3C;--c-chess:#5E8466;--c-gym:#4F7CA8;--c-study:#7E64A8;--c-act:#A9822A;--c-art:#B35E7D;--c-life:#8A867C}
@@ -206,7 +206,7 @@ h1{font-size:34px;letter-spacing:-.6px;margin-top:6px;line-height:1.15}
 <div class="nowbtns"><button class="btn acc grow" id="fdone" data-t="Done">Done</button><button class="btn" onclick="closeFocus()" data-t="Exit">Exit</button></div>
 <p class="sub" data-t="Tip: turn on Do Not Disturb. Blocking apps will come with the Android app.">Tip: turn on Do Not Disturb. Blocking apps will come with the Android app.</p></div></div>
 <div class="ov" id="ov"><div class="md" id="md"></div></div>
-<script src="capacitor.js"></script><script src="local-notifications.js"></script>
+<script src="config.js"></script><script src="supabase.js"></script><script src="capacitor.js"></script><script src="local-notifications.js"></script>
 <script>
 var NOW_OVERRIDE=null;
 const P={
@@ -285,7 +285,7 @@ const HE={
 'Subject':'מקצוע','e.g. Maths':'למשל מתמטיקה','Test date':'תאריך המבחן','Days I can study':'ימים שאני יכול ללמוד','Next':'הבא',
 'Ask Claude to plan {0}':'לבקש מ-Claude לתכנן {0}',"Claude opens with your days and routine already filled in. Paste what the test covers, then copy Claude's answer and come back.":'Claude ייפתח עם הימים והשגרה שלך כבר כתובים. הדבק מה החומר למבחן, ואז העתק את התשובה של Claude וחזור לכאן.',
 'Later':'אחר כך','Paste the {0} plan':'הדבקת התוכנית של {0}','Remove the {0} plan?':'להסיר את התוכנית של {0}?','Its study blocks disappear from your days.':'בלוקי הלימוד שלה ייעלמו מהימים שלך.',
-'Settings':'הגדרות','{0} is blocked during focus.':'{0} חסום בזמן ריכוז.','Turn on app blocking':'הפעלת חסימת אפליקציות',
+'Settings':'הגדרות','Account':'חשבון','Accounts are not set up yet.':'חשבונות עוד לא הוגדרו.','Log in to sync your schedule between your phone and computer.':'התחבר כדי לסנכרן את הלו״ז בין הטלפון למחשב.','Log in':'התחברות','Sign up':'הרשמה','Create an account':'יצירת חשבון','Email':'אימייל','Password':'סיסמה','At least 6 characters':'לפחות 6 תווים','Fill in your email and password.':'מלא אימייל וסיסמה.','Check your email to confirm your account, then log in.':'בדוק את האימייל כדי לאשר את החשבון, ואז התחבר.','no internet':'אין אינטרנט','Log out':'התנתקות','Log out?':'להתנתק?','Your schedule stays on this device, but it stops syncing.':'הלו״ז נשאר במכשיר הזה, אבל מפסיק להסתנכרן.','Syncing…':'מסנכרן…','Sync problem: {0}':'בעיה בסנכרון: {0}','Synced at {0}':'סונכרן ב-{0}','Synced':'מסונכרן','Which schedule should we keep?':'איזה לו״ז לשמור?','Your account already has a schedule. Use the one from your account, or replace it with the one on this device?':'בחשבון שלך כבר יש לו״ז. להשתמש בזה שבחשבון, או להחליף אותו בזה שבמכשיר הזה?','Use my account':'מהחשבון','Use this device':'מהמכשיר הזה','{0} is blocked during focus.':'{0} חסום בזמן ריכוז.','Turn on app blocking':'הפעלת חסימת אפליקציות',
 "To block apps while you focus, Schedule Maker needs Accessibility access.\n\n1. Tap Open Accessibility.\n2. Find Schedule Maker focus (under Installed apps or Downloaded apps) and turn it on.\n\nIf it's greyed out: tap Open App info, tap ⋮ in the top corner, choose Allow restricted settings, then try again.":'כדי לחסום אפליקציות בזמן ריכוז, Schedule Maker צריך הרשאת נגישות.\n\n1. לחץ "פתיחת נגישות".\n2. מצא את Schedule Maker focus (תחת "אפליקציות מותקנות" או "אפליקציות שהורדו") והפעל אותו.\n\nאם זה אפור: לחץ "פרטי האפליקציה", לחץ על ⋮ בפינה, בחר "אפשר הגדרות מוגבלות", ונסה שוב.',
 'Open Accessibility':'פתיחת נגישות','Open App info':'פרטי האפליקציה','Not now':'לא עכשיו','{0} starts at {1}':'{0} מתחיל ב-{1}','{0} in 5 minutes':'{0} בעוד 5 דקות','Reminders':'תזכורות','On':'פועל','Off':'כבוי','Blocked during focus':'חסום בזמן ריכוז','Appearance':'מראה','System':'מערכת','Light':'בהיר','Dark':'כהה','Language':'שפה','Test':'מבחן','Skip today':'לדלג היום'};
 const NAMES_HE={'Piano practice':'תרגול פסנתר','Chess':'שחמט','Drawing':'ציור','Gym':'חדר כושר','Home: grab gym stuff':'הביתה: לקחת דברים לחדר כושר','Tnuah':'תנועה','Chess lesson':'שיעור שחמט','Coding class':'שיעור תכנות','Piano lesson':'שיעור פסנתר','Lunch at home':'ארוחת צהריים בבית','free practice':'תרגול חופשי'};
@@ -310,7 +310,7 @@ const DEFAULT_WEEK=()=>[
  {start:'10:00',items:[]}];
 let S=null;try{S=JSON.parse(localStorage.getItem('sm2'))}catch(e){}
 if(!S||!S.week)S={week:DEFAULT_WEEK(),end:'21:30',travel:15,piano:{},day:null,today:{start:'10:00',items:[]},anchor:null,pending:null,tab:'today'};
-const save=()=>{try{localStorage.setItem('sm2',JSON.stringify(S))}catch(e){}};
+const save=()=>{try{localStorage.setItem('sm2',JSON.stringify(S))}catch(e){};if(window.__onSave)window.__onSave()};
 S.pianoDays=S.pianoDays||[];S.theme=S.theme||'system';S.lang=S.lang||'en';S.study=S.study||[];let needRefresh=false;
 if((S.v||0)<3){S.week.forEach(d=>d.items.forEach(x=>{if(!x.at&&/piano/i.test(x.name)&&x.dur<60)x.dur=60;if(/^chess$/i.test(x.name.trim()))x.fill=true}));S.v=3;needRefresh=!!S.day;save()}
 let fx=false,asking=false,cur=null,selDay=new Date().getDay();
@@ -330,11 +330,11 @@ const cv=n=>`--c:var(--c-${COL[n]||'life'})`;
 const isPianoSlot=x=>!x.at&&/piano|פסנתר/i.test(x.name);
 
 /* ---------- modal ---------- */
-function modal({icon='spark',title,text='',html='',yes=t('OK'),no=t('Cancel'),onOpen,yesHref,extra,onYes}){return new Promise(r=>{
+function modal({icon='spark',title,text='',html='',yes=t('OK'),no=t('Cancel'),onOpen,yesHref,extra,onYes,validate}){return new Promise(r=>{
  g('md').innerHTML=`<div class="mi">${ic(icon)}</div><h3 class="serif">${esc(title)}</h3>${text?`<p>${esc(text)}</p>`:''}${html}<div class="mb">${yesHref?`<a class="btn acc" id="myes" href="${esc(yesHref)}" target="_blank" rel="noopener">${esc(yes)}</a>`:`<button class="btn acc" id="myes">${esc(yes)}</button>`}${extra?`<button class="btn" id="mex">${esc(extra)}</button>`:''}${no?`<button class="btn" id="mno">${esc(no)}</button>`:''}</div>`;
  const ov=g('ov');ov.classList.add('show');
  const close=v=>{ov.classList.remove('show');r(v)};
- g('myes').onclick=()=>{if(yesHref&&onYes)onYes();close(true)};if(no)g('mno').onclick=()=>close(false);if(extra)g('mex').onclick=()=>close('extra');
+ g('myes').onclick=async()=>{if(yesHref&&onYes)onYes();if(validate){const b=g('myes');b.disabled=true;let v=false;try{v=await validate()}finally{b.disabled=false}if(!v)return}close(true)};if(no)g('mno').onclick=()=>close(false);if(extra)g('mex').onclick=()=>close('extra');
  ov.onclick=e=>{if(e.target===ov)close(false)};
  if(onOpen)onOpen()})}
 
@@ -622,6 +622,57 @@ function nativeSettingsHtml(){if(!CAP)return'';
  <div class="stitle">${t('Blocked during focus')}</div><div class="tools" style="margin-top:8px">${BLOCKABLE.map(([n])=>`<button class="chip ${S.block.includes(n)?'on':''}" onclick="toggleBlock('${n}')">${esc(n)}</button>`).join('')}</div>`}
 function toggleBlock(n){S.block=S.block.includes(n)?S.block.filter(x=>x!==n):[...S.block,n];save();const b=g('setb');if(b)b.innerHTML=settingsHtml()}
 
+/* ---------- accounts & sync (Supabase) ---------- */
+const SYNC_KEYS=['week','end','travel','piano','study','pianoDays','today','day','anchor','lang','v'];
+const CFG=window.SM_CONFIG||{};
+const SB=(CFG.supabaseUrl&&CFG.supabaseKey&&window.supabase)?supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;
+let USER=null,syncTimer=null,syncState='',syncMsg='',syncAt=null,applying=false,channel=null;
+const syncPart=()=>{const o={};SYNC_KEYS.forEach(k=>{if(S[k]!==undefined)o[k]=S[k]});return o};
+let lastHash=JSON.stringify(syncPart());
+window.__onSave=()=>{if(applying)return;const h=JSON.stringify(syncPart());if(h===lastHash)return;lastHash=h;S.updatedAt=Date.now();
+ try{localStorage.setItem('sm2',JSON.stringify(S))}catch(e){};schedulePush()};
+function schedulePush(){if(!SB||!USER)return;clearTimeout(syncTimer);syncTimer=setTimeout(pushNow,1200)}
+function setSync(st,msg){syncState=st;syncMsg=msg||'';if(st==='ok')syncAt=new Date();const el=g('syncst');if(el)el.textContent=syncText()}
+function syncText(){return syncState==='saving'?t('Syncing…'):syncState==='error'?t('Sync problem: {0}',syncMsg):syncAt?t('Synced at {0}',fmt(syncAt.getHours()*60+syncAt.getMinutes())):t('Synced')}
+async function pushNow(){if(!SB||!USER)return;setSync('saving');
+ try{const{error}=await SB.from('schedules').upsert({user_id:USER.id,data:syncPart(),updated_at:new Date(S.updatedAt||Date.now()).toISOString()});setSync(error?'error':'ok',error&&error.message)}catch(e){setSync('error',t('no internet'))}}
+async function pullNow(first){if(!SB||!USER)return;setSync('saving');let res;
+ try{res=await SB.from('schedules').select('data,updated_at').eq('user_id',USER.id).maybeSingle()}catch(e){setSync('error',t('no internet'));return}
+ if(res.error){setSync('error',res.error.message);return}
+ const row=res.data;if(!row){S.synced=USER.id;S.updatedAt=S.updatedAt||Date.now();save();await pushNow();return}
+ const rt=Date.parse(row.updated_at);
+ if(first&&S.synced!==USER.id){S.synced=USER.id;save();
+  if(S.updatedAt&&rt!==S.updatedAt){const ch=await modal({icon:'reset',title:t('Which schedule should we keep?'),text:t('Your account already has a schedule. Use the one from your account, or replace it with the one on this device?'),yes:t('Use my account'),extra:t('Use this device'),no:''});
+   if(ch==='extra'){S.updatedAt=Date.now();save();await pushNow();return}}
+  applyRemote(row.data,rt);return}
+ if(rt>(S.updatedAt||0))applyRemote(row.data,rt);else if(rt<(S.updatedAt||0))await pushNow();else setSync('ok')}
+function applyRemote(d,tm){applying=true;SYNC_KEYS.forEach(k=>{if(d&&d[k]!==undefined)S[k]=d[k]});S.updatedAt=tm;lastHash=JSON.stringify(syncPart());
+ try{localStorage.setItem('sm2',JSON.stringify(S))}catch(e){};applying=false;applyLang();render();setSync('ok')}
+function subscribe(){if(channel||!SB||!USER)return;
+ channel=SB.channel('sched-'+USER.id).on('postgres_changes',{event:'*',schema:'public',table:'schedules',filter:'user_id=eq.'+USER.id},p=>{const r=p.new;if(!r||!r.updated_at)return;const tm=Date.parse(r.updated_at);if(tm>(S.updatedAt||0))applyRemote(r.data,tm)}).subscribe()}
+function refreshSettings(){const b=g('setb');if(b)b.innerHTML=settingsHtml()}
+async function initAuth(){if(!SB)return;try{const{data}=await SB.auth.getSession();USER=data.session?data.session.user:null}catch(e){}
+ SB.auth.onAuthStateChange((ev,session)=>{const u=session?session.user:null;if((u&&u.id)===(USER&&USER.id))return;USER=u;
+  if(USER){pullNow(true);subscribe()}else if(channel){SB.removeChannel(channel);channel=null}refreshSettings()});
+ if(USER){pullNow(true);subscribe()}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&USER)pullNow(false)});
+function accountHtml(){const head=`<div class="stitle">${t('Account')}</div>`;
+ if(!SB)return head+`<p class="sub" style="margin-top:6px">${t('Accounts are not set up yet.')}</p>`;
+ if(!USER)return head+`<p class="sub" style="margin-top:6px">${t('Log in to sync your schedule between your phone and computer.')}</p><div class="btns" style="margin-top:10px"><button class="btn acc" onclick="authForm('login')">${t('Log in')}</button><button class="btn" onclick="authForm('signup')">${t('Sign up')}</button></div>`;
+ return head+`<div class="ri"><div class="ic" style="${cv('users')}">${ic('users')}</div><div class="mid"><div class="name">${esc(USER.email)}</div><div class="meta" id="syncst">${esc(syncText())}</div></div><button class="btn" onclick="logout()">${t('Log out')}</button></div>`}
+async function authForm(mode){const login=mode==='login';
+ const ok=await modal({icon:'users',title:t(login?'Log in':'Create an account'),yes:t(login?'Log in':'Sign up'),
+  html:`<div class="form"><label class="fld">${t('Email')}<input id="aE" type="email" autocomplete="email" inputmode="email"></label><label class="fld">${t('Password')}<input id="aP" type="password" autocomplete="${login?'current-password':'new-password'}" placeholder="${login?'':t('At least 6 characters')}"></label><p class="sub" id="aErr" style="color:var(--bad);margin:0"></p></div>`,
+  onOpen:()=>{g('aE').focus();g('aP').onkeydown=e=>{if(e.key==='Enter')g('myes').click()}},
+  validate:async()=>{const e=g('aE').value.trim(),p=g('aP').value;if(!e||!p){g('aErr').textContent=t('Fill in your email and password.');return false}
+   try{const r=login?await SB.auth.signInWithPassword({email:e,password:p}):await SB.auth.signUp({email:e,password:p});
+    if(r.error){g('aErr').textContent=r.error.message;return false}
+    if(!login&&!r.data.session){g('aErr').textContent=t('Check your email to confirm your account, then log in.');return false}
+    return true}catch(err){g('aErr').textContent=t('no internet');return false}}});
+ if(ok)openSettings()}
+async function logout(){if(await modal({icon:'users',title:t('Log out?'),text:t('Your schedule stays on this device, but it stops syncing.'),yes:t('Log out')})){await SB.auth.signOut();USER=null;openSettings()}}
+if(!IS_NATIVE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+
 function applyTheme(){const r=document.documentElement;if(S.theme==='system')r.removeAttribute('data-theme');else r.setAttribute('data-theme',S.theme);
  const dark=S.theme==='dark'||(S.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
  document.querySelectorAll('meta[name=theme-color]').forEach(m=>m.setAttribute('content',dark?'#161615':'#F4F3EE'))}
@@ -630,13 +681,13 @@ function applyLang(){const r=document.documentElement;r.lang=he()?'he':'en';r.di
  document.querySelectorAll('[data-tp]').forEach(e=>e.placeholder=t(e.dataset.tp));
  document.querySelectorAll('.gear').forEach(e=>e.setAttribute('aria-label',t('Settings')))}
 function settingsHtml(){const seg=(key,opts)=>`<div class="seg">${opts.map(([v,l,i])=>`<button class="${S[key]===v?'on':''}" onclick="setPref('${key}','${v}')">${i?ic(i):''}${l}</button>`).join('')}</div>`;
- return`<div class="stitle">${t('Appearance')}</div>${seg('theme',[['system',t('System'),'phone'],['light',t('Light'),'sun'],['dark',t('Dark'),'moon']])}
+ return accountHtml()+`<div class="stitle">${t('Appearance')}</div>${seg('theme',[['system',t('System'),'phone'],['light',t('Light'),'sun'],['dark',t('Dark'),'moon']])}
  <div class="stitle">${t('Language')}</div>${seg('lang',[['en','English'],['he','עברית']])}`+nativeSettingsHtml()}
 function openSettings(){modal({icon:'gear',title:t('Settings'),html:'<div id="setb">'+settingsHtml()+'</div>',yes:t('Done'),no:''})}
 function setPref(k,v){S[k]=v;save();applyTheme();applyLang();render();
  const h3=document.querySelector('#md h3');if(h3)h3.textContent=t('Settings');const b=g('setb');if(b)b.innerHTML=settingsHtml();const y=g('myes');if(y)y.textContent=t('Done')}
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme)}catch(e){}
-applyTheme();applyLang();
+applyTheme();applyLang();initAuth();
 if(needRefresh)refreshToday();
 
 render();setInterval(tick,1000);setInterval(()=>render(),30000);
