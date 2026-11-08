@@ -1,0 +1,9 @@
+{
+  "appId": "com.irotheangel.schedulemaker",
+  "appName": "Schedule Maker",
+  "webDir": "www",
+  "android": { "backgroundColor": "#161615" },
+  "plugins": {
+    "LocalNotifications": { "smallIcon": "ic_stat_icon", "iconColor": "#D97757" }
+  }
+}
