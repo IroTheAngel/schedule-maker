@@ -387,18 +387,19 @@ function refreshToday(){const old=S.today.items,anchor=S.anchor;buildDay(new Dat
 async function reloadDay(){if(await modal({icon:'reset',title:t('Reload {0}?',dayName(new Date().getDay())),text:t("This puts back today's routine from your Week tab and clears what you ticked off today."),yes:t('Reload')})){buildDay(new Date());save();render()}}
 
 /* ---------- scheduling ---------- */
+const grpKey=x=>x.grp||(x.adhoc&&x.ic?'adhoc-'+x.ic:null)||((x.name.match(/^(Piano|Study): /)||[])[1]||null);
 function plan(){const T=S.today,nowM=nowSec()/60,end=toMin(S.end);
  const live=T.items.filter(x=>!x.done&&!x.skip),flow=live.filter(x=>!x.fill),fills=live.filter(x=>x.fill);
  const base=Math.max(toMin(T.start),S.anchor??0);
  const fixed=flow.filter(x=>x.at).map(x=>{const s=toMin(x.at);let e=s+x.dur,over=false;if(x.flex&&nowM>=s&&nowM>=e){e=Math.floor(nowM)+1;over=true}return{id:x.id,s,e,over,tr:x.travel||0}});
- function run(b){const out=[];let c=base,lates=0;
+ function run(b){const out=[];let c=base,lates=0,lastG=null,lastE=null;
   for(const x of flow){
    if(x.at){const f=fixed.find(f=>f.id===x.id);out.push({...x,s:f.s,e:f.e,e0:f.s+x.dur,over:f.over,fixed:true,late:f.e>end});c=Math.max(c,f.e);continue}
-   let t=c,s,e,guard=0;
+   const gk=grpKey(x);let t=(gk&&gk===lastG&&c===lastE+b)?lastE:c,s,e,guard=0;
    while(guard++<50){s=t+(x.travel||0);e=s+x.dur;const hit=fixed.find(f=>t<f.e&&e>f.s-f.tr);if(!hit)break;t=Math.max(t,hit.e)}
    const e0=e;let over=false;if(x.flex&&nowM>=s&&nowM>=e){e=Math.floor(nowM)+1;over=true}
    const late=e>end;if(late)lates++;
-   out.push({...x,s,e,e0,over,late});c=e+b}
+   out.push({...x,s,e,e0,over,late});c=e+b;lastG=gk;lastE=e}
   return{out,lates,b}}
  let best=null;for(const b of[10,5,0]){const r=run(b);if(!best||r.lates<best.lates)best=r}
  const out=best.out,noTime=[];
@@ -456,7 +457,7 @@ async function openPaste(mode){if(g('ov').classList.contains('show'))return;
  if(mode==='week'){const p=parseWeek(text);if(!Object.keys(p).length)return modal({icon:'clip',title:t("Couldn't read that"),text:t('Paste lines that look like this:')+'\nSat: Scales - 10, New piece - 20',no:''});
   S.piano=p;refreshToday();render();return}
  const b=parse(text);if(!b.length)return modal({icon:'clip',title:t("Couldn't read that"),text:t('Paste lines that look like this:')+'\nScales - 10\nNew piece - 20',no:''});
- b.forEach(x=>S.today.items.push(it(x.name,x.dur,{adhoc:true,ic:cat!=='dot'?cat:null})));save();render()}
+ const gid='p'+uid();b.forEach(x=>S.today.items.push(it(x.name,x.dur,{adhoc:true,grp:gid,ic:cat!=='dot'?cat:null})));save();render()}
 const back=()=>{if(S.pending)setTimeout(()=>openPaste(S.pending==='week'?'week':S.pending.startsWith('study:')?'study':'today'),250)};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){ensureDay();back()}});
 window.addEventListener('focus',back);
