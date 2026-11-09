@@ -1,6 +1,10 @@
 package com.irotheangel.schedulemaker;
 
 import android.app.AppOpsManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.content.ActivityNotFoundException;
 import android.os.Build;
 import android.os.Process;
@@ -27,7 +31,25 @@ public class FocusPlugin extends Plugin {
 
     @Override
     public void load() {
+        createAlarmChannel();
         handleIntent(getActivity().getIntent());
+    }
+
+    /** Reminders on this channel use the alarm sound and alarm volume, so they still ring when the phone is on silent. */
+    private void createAlarmChannel() {
+        if (Build.VERSION.SDK_INT < 26) return;
+        NotificationManager nm = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null || nm.getNotificationChannel("sm_alarm") != null) return;
+        NotificationChannel ch = new NotificationChannel("sm_alarm", "Reminders (alarm sound)", NotificationManager.IMPORTANCE_HIGH);
+        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (sound == null) sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        ch.setSound(sound, new AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build());
+        ch.enableVibration(true);
+        ch.setVibrationPattern(new long[] {0, 700, 300, 700, 300, 700});
+        nm.createNotificationChannel(ch);
     }
 
     @Override

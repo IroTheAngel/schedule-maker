@@ -310,7 +310,7 @@ const HE={
 'Later':'אחר כך','Paste the {0} plan':'הדבקת התוכנית של {0}','Remove the {0} plan?':'להסיר את התוכנית של {0}?','Its study blocks disappear from your days.':'בלוקי הלימוד שלה ייעלמו מהימים שלך.',
 'Settings':'הגדרות','Account':'חשבון','Accounts are not set up yet.':'חשבונות עוד לא הוגדרו.','Log in to sync your schedule between your phone and computer.':'התחבר כדי לסנכרן את הלו״ז בין הטלפון למחשב.','Log in':'התחברות','Sign up':'הרשמה','Create an account':'יצירת חשבון','Email':'אימייל','Password':'סיסמה','At least 6 characters':'לפחות 6 תווים','Fill in your email and password.':'מלא אימייל וסיסמה.','Check your email to confirm your account, then log in.':'בדוק את האימייל כדי לאשר את החשבון, ואז התחבר.','no internet':'אין אינטרנט','Log out':'התנתקות','Log out?':'להתנתק?','Your schedule stays on this device, but it stops syncing.':'הלו״ז נשאר במכשיר הזה, אבל מפסיק להסתנכרן.','Syncing…':'מסנכרן…','Sync problem: {0}':'בעיה בסנכרון: {0}','Synced at {0}':'סונכרן ב-{0}','Synced':'מסונכרן','Which schedule should we keep?':'איזה לו״ז לשמור?','Your account already has a schedule. Use the one from your account, or replace it with the one on this device?':'בחשבון שלך כבר יש לו״ז. להשתמש בזה שבחשבון, או להחליף אותו בזה שבמכשיר הזה?','Use my account':'מהחשבון','Use this device':'מהמכשיר הזה','{0} is blocked during focus.':'{0} חסום בזמן ריכוז.','Turn on app blocking':'הפעלת חסימת אפליקציות',
 "To block apps while you focus, Schedule Maker needs two permissions (only once):\n\n1. Usage access: lets it see which app is open.\n2. Display over other apps: lets it bring you back here.\n\nTap the button, find Schedule Maker in the list, turn it on, then come back and press Focus again.":'כדי לחסום אפליקציות בזמן ריכוז, Schedule Maker צריך שתי הרשאות (רק פעם אחת):\n\n1. גישה לנתוני שימוש: כדי לראות איזו אפליקציה פתוחה.\n2. הצגה מעל אפליקציות אחרות: כדי להחזיר אותך לכאן.\n\nלחץ על הכפתור, מצא את Schedule Maker ברשימה, הפעל, ואז חזור ולחץ שוב על ריכוז.',
-'Usage access':'גישה לנתוני שימוש','Display over other apps':'הצגה מעל אפליקציות אחרות','Not now':'לא עכשיו','{0} starts at {1}':'{0} מתחיל ב-{1}','{0} in 5 minutes':'{0} בעוד 5 דקות','Reminders':'תזכורות','On':'פועל','Off':'כבוי','Blocked during focus':'חסום בזמן ריכוז','Appearance':'מראה','System':'מערכת','Light':'בהיר','Dark':'כהה','Language':'שפה','Test':'מבחן','Skip today':'לדלג היום'};
+'Usage access':'גישה לנתוני שימוש','Display over other apps':'הצגה מעל אפליקציות אחרות','Not now':'לא עכשיו','{0} starts at {1}':'{0} מתחיל ב-{1}','{0} in 5 minutes':'{0} בעוד 5 דקות','Reminders':'תזכורות','Alarm':'שעון מעורר','Notification':'התראה','On':'פועל','Off':'כבוי','Blocked during focus':'חסום בזמן ריכוז','Appearance':'מראה','System':'מערכת','Light':'בהיר','Dark':'כהה','Language':'שפה','Test':'מבחן','Skip today':'לדלג היום'};
 const NAMES_HE={'Piano practice':'תרגול פסנתר','Chess':'שחמט','Drawing':'ציור','Gym':'חדר כושר','Home: grab gym stuff':'הביתה: לקחת דברים לחדר כושר','Tnuah':'תנועה','Chess lesson':'שיעור שחמט','Coding class':'שיעור תכנות','Piano lesson':'שיעור פסנתר','Lunch at home':'ארוחת צהריים בבית','free practice':'תרגול חופשי'};
 const he=()=>typeof S!=='undefined'&&S&&S.lang==='he';
 const t=(k,...a)=>{let x=he()&&HE[k]!=null?HE[k]:k;a.forEach((v,i)=>x=x.split('{'+i+'}').join(v));return x};
@@ -609,7 +609,7 @@ const CAP=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacit
 const Focus=CAP&&window.capacitorExports?capacitorExports.registerPlugin('Focus'):null;
 const LN=CAP&&window.capacitorLocalNotifications?capacitorLocalNotifications.LocalNotifications:null;
 const BLOCKABLE=[['YouTube',['com.google.android.youtube']],['TikTok',['com.zhiliaoapp.musically','com.ss.android.ugc.trill']],['Instagram',['com.instagram.android']],['Snapchat',['com.snapchat.android']],['Discord',['com.discord']],['WhatsApp',['com.whatsapp']],['Facebook',['com.facebook.katana']],['X',['com.twitter.android']],['Reddit',['com.reddit.frontpage']],['Roblox',['com.roblox.client']]];
-if(!S.block)S.block=['YouTube','TikTok','Instagram','Snapchat'];if(S.notif===undefined)S.notif=true;
+if(!S.block)S.block=['YouTube','TikTok','Instagram','Snapchat'];if(S.notif===undefined||S.notif===true)S.notif='alarm';if(S.notif===false)S.notif='off';
 const blockPkgs=()=>BLOCKABLE.filter(([n])=>S.block.includes(n)).flatMap(([,p])=>p);
 const appName=pkg=>(BLOCKABLE.find(([,p])=>p.includes(pkg))||[pkg])[0];
 let PREFILL=null,blockedMsg=null,blockedTimer=null;
@@ -618,7 +618,7 @@ if(CAP){document.documentElement.classList.add('native');
  document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href*="claude.ai"]');if(!a||!Focus)return;e.preventDefault();
   const m=a.getAttribute('href').match(/[?&]q=([^#&;]*)/);Focus.openClaude({text:m?decodeURIComponent(m[1]):''}).catch(()=>{})},true);
  if(Focus){Focus.addListener('sharedText',d=>onShared(d.text));Focus.addListener('blocked',d=>onBlocked(d.app))}
- if(LN)LN.requestPermissions().catch(()=>{});
+ if(LN){LN.requestPermissions().catch(()=>{});LN.createChannel({id:'sm_notif',name:'Reminders',importance:4,vibration:true}).catch(()=>{})}
 }
 function onShared(text){const ta=g('ta');if(ta&&g('ov').classList.contains('show')){ta.value=text;ta.dispatchEvent(new Event('input'));return}
  PREFILL=text;const p=S.pending||'';openPaste(p==='week'?'week':p.startsWith('study:')?'study':'today')}
@@ -633,16 +633,17 @@ function nativeFocusOff(){if(Focus)Focus.stop().catch(()=>{})}
 /* notifications: today + the next 2 days */
 let lastSig="";var NOW_OVERRIDE=null;
 function planForDate(d){const keep={today:S.today,anchor:S.anchor,day:S.day};buildDay(d);NOW_OVERRIDE=0;let p=[];try{p=plan()}finally{NOW_OVERRIDE=null;S.today=keep.today;S.anchor=keep.anchor;S.day=keep.day}return p}
+const chan=()=>S.notif==='alarm'?'sm_alarm':'sm_notif';
 function scheduleNotifs(todayPlan){if(!LN)return;const list=[],now=Date.now();let id=1;
  for(let k=0;k<3;k++){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+k);const p=k?planForDate(new Date(d)):todayPlan;
   p.forEach(x=>{if(x.late)return;const st=d.getTime()+x.s*60000;
-   if(x.travel){const lv=st-x.travel*60000;if(lv>now)list.push({id:id++,title:t('Time to leave'),body:t('{0} starts at {1}',dn(x.name),fmt(x.s)),schedule:{at:new Date(lv),allowWhileIdle:true}})}
-   else{const pre=st-5*60000;if(pre>now)list.push({id:id++,title:t('{0} in 5 minutes',dn(x.name)),body:t('Starts at {0}',fmt(x.s)),schedule:{at:new Date(pre),allowWhileIdle:true}})}})}
+   if(x.travel){const lv=st-x.travel*60000;if(lv>now)list.push({id:id++,title:t('Time to leave'),body:t('{0} starts at {1}',dn(x.name),fmt(x.s)),schedule:{at:new Date(lv),allowWhileIdle:true},channelId:chan()})}
+   else{const pre=st-5*60000;if(pre>now)list.push({id:id++,title:t('{0} in 5 minutes',dn(x.name)),body:t('Starts at {0}',fmt(x.s)),schedule:{at:new Date(pre),allowWhileIdle:true},channelId:chan()})}})}
  const sig=S.notif+JSON.stringify(list.map(n=>[n.title,n.body,+n.schedule.at]));if(sig===lastSig)return;lastSig=sig;
  (async()=>{try{const pend=await LN.getPending();if(pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(n=>({id:n.id}))});
-  if(S.notif&&list.length)await LN.schedule({notifications:list.slice(0,60)})}catch(e){}})()}
+  if(S.notif!=='off'&&list.length)await LN.schedule({notifications:list.slice(0,60)})}catch(e){}})()}
 function nativeSettingsHtml(){if(!CAP)return'';
- return`<div class="stitle">${t('Reminders')}</div><div class="seg"><button class="${S.notif?'on':''}" onclick="setPref('notif',true)">${t('On')}</button><button class="${S.notif?'':'on'}" onclick="setPref('notif',false)">${t('Off')}</button></div>
+ return`<div class="stitle">${t('Reminders')}</div><div class="seg">${[['alarm','Alarm'],['notif','Notification'],['off','Off']].map(([v,l])=>`<button class="${S.notif===v?'on':''}" onclick="setPref('notif','${v}')">${t(l)}</button>`).join('')}</div>
  <div class="stitle">${t('Blocked during focus')}</div><div class="tools" style="margin-top:8px">${BLOCKABLE.map(([n])=>`<button class="chip ${S.block.includes(n)?'on':''}" onclick="toggleBlock('${n}')">${esc(n)}</button>`).join('')}</div>`}
 function toggleBlock(n){S.block=S.block.includes(n)?S.block.filter(x=>x!==n):[...S.block,n];save();const b=g('setb');if(b)b.innerHTML=settingsHtml()}
 
