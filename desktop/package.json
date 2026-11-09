@@ -1,0 +1,41 @@
+{
+  "name": "schedule-maker-desktop",
+  "productName": "Schedule Maker",
+  "version": "1.0.0",
+  "description": "Schedule Maker for Windows",
+  "author": "IroTheAngel",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --publish never"
+  },
+  "build": {
+    "appId": "com.irotheangel.schedulemaker",
+    "productName": "Schedule Maker",
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Schedule Maker",
+      "artifactName": "ScheduleMaker-Setup.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0"
+  }
+}

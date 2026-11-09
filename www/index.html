@@ -491,7 +491,7 @@ function render(check){ensureDay();
  const lastEnd=p.length?Math.max(...p.map(x=>x.e)):0;
  g('sum').textContent=!S.today.items.length?t('Plan your day, one task at a time.'):p.length?t("You'll finish around {0}.",fmt(lastEnd)):t('Everything is done.');
  renderNow(p);
- if(IS_NATIVE)scheduleNotifs(p);
+ if(IS_NATIVE||window.desktop)scheduleNotifs(p);
  const late1=p.find(x=>x.late&&!x.opt);
  if(check&&late1&&!asking){asking=true;modal({icon:'clock',title:t("{0} doesn't fit anymore",dn(late1.name)),text:t("There isn't enough time left today. Skip it for today?"),yes:t('Skip it today'),no:t('Keep it')}).then(y=>{asking=false;if(y)skip(late1.id)})}}
 function renderNow(p){const ns=nowSec(),c=g('nowc');
@@ -634,15 +634,16 @@ function nativeFocusOff(){if(Focus)Focus.stop().catch(()=>{})}
 let lastSig="";var NOW_OVERRIDE=null;
 function planForDate(d){const keep={today:S.today,anchor:S.anchor,day:S.day};buildDay(d);NOW_OVERRIDE=0;let p=[];try{p=plan()}finally{NOW_OVERRIDE=null;S.today=keep.today;S.anchor=keep.anchor;S.day=keep.day}return p}
 const chan=()=>S.notif==='alarm'?'sm_alarm':'sm_notif';
-function scheduleNotifs(todayPlan){if(!LN)return;const list=[],now=Date.now();let id=1;
+function scheduleNotifs(todayPlan){if(!LN&&!window.desktop)return;const list=[],now=Date.now();let id=1;
  for(let k=0;k<3;k++){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+k);const p=k?planForDate(new Date(d)):todayPlan;
   p.forEach(x=>{if(x.late)return;const st=d.getTime()+x.s*60000;
    if(x.travel){const lv=st-x.travel*60000;if(lv>now)list.push({id:id++,title:t('Time to leave'),body:t('{0} starts at {1}',dn(x.name),fmt(x.s)),schedule:{at:new Date(lv),allowWhileIdle:true},channelId:chan()})}
    else{const pre=st-5*60000;if(pre>now)list.push({id:id++,title:t('{0} in 5 minutes',dn(x.name)),body:t('Starts at {0}',fmt(x.s)),schedule:{at:new Date(pre),allowWhileIdle:true},channelId:chan()})}})}
  const sig=S.notif+JSON.stringify(list.map(n=>[n.title,n.body,+n.schedule.at]));if(sig===lastSig)return;lastSig=sig;
+ if(window.desktop&&!LN){window.desktop.schedule(S.notif==='off'?[]:list.map(n=>({title:n.title,body:n.body,at:+n.schedule.at})));return}
  (async()=>{try{const pend=await LN.getPending();if(pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(n=>({id:n.id}))});
   if(S.notif!=='off'&&list.length)await LN.schedule({notifications:list.slice(0,60)})}catch(e){}})()}
-function nativeSettingsHtml(){if(!CAP)return'';
+function nativeSettingsHtml(){if(!CAP&&window.desktop)return`<div class="stitle">${t('Reminders')}</div><div class="seg">${[['notif','On'],['off','Off']].map(([v,l])=>`<button class="${(v==='off')===(S.notif==='off')?'on':''}" onclick="setPref('notif','${v}')">${t(l)}</button>`).join('')}</div>`;if(!CAP)return'';
  return`<div class="stitle">${t('Reminders')}</div><div class="seg">${[['alarm','Alarm'],['notif','Notification'],['off','Off']].map(([v,l])=>`<button class="${S.notif===v?'on':''}" onclick="setPref('notif','${v}')">${t(l)}</button>`).join('')}</div>
  <div class="stitle">${t('Blocked during focus')}</div><div class="tools" style="margin-top:8px">${BLOCKABLE.map(([n])=>`<button class="chip ${S.block.includes(n)?'on':''}" onclick="toggleBlock('${n}')">${esc(n)}</button>`).join('')}</div>`}
 function toggleBlock(n){S.block=S.block.includes(n)?S.block.filter(x=>x!==n):[...S.block,n];save();const b=g('setb');if(b)b.innerHTML=settingsHtml()}

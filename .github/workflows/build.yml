@@ -1,4 +1,4 @@
-name: Build Android app
+name: Build apps
 
 on:
   push:
@@ -9,43 +9,74 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
           cache: gradle
-
       - name: Install
         run: npm ci
-
       - name: Copy the app into the Android project
         run: npx cap sync android
-
       - name: Build APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --stacktrace
+      - run: cp android/app/build/outputs/apk/release/app-release.apk ScheduleMaker.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: ScheduleMaker.apk
 
-      - name: Rename APK
-        run: cp android/app/build/outputs/apk/release/app-release.apk ScheduleMaker.apk
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Install
+        working-directory: desktop
+        run: npm ci
+      - name: Copy the app into the Windows project
+        shell: pwsh
+        run: Copy-Item -Recurse -Force www desktop/app
+      - name: Build installer
+        working-directory: desktop
+        run: |
+          npm version 1.0.${{ github.run_number }} --no-git-tag-version --allow-same-version
+          npx electron-builder --win --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exe
+          path: desktop/dist/ScheduleMaker-Setup.exe
 
-      - name: Publish release
-        uses: softprops/action-gh-release@v2
+  release:
+    needs: [android, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: Schedule Maker (build ${{ github.run_number }})
           body: |
-            Download **ScheduleMaker.apk** below on your Android phone and open it to install or update.
-          files: ScheduleMaker.apk
+            **Android:** download **ScheduleMaker.apk** on your phone and open it to install or update.
+            **Windows:** download **ScheduleMaker-Setup.exe** on your PC and run it.
+          files: |
+            ScheduleMaker.apk
+            ScheduleMaker-Setup.exe
           make_latest: true
