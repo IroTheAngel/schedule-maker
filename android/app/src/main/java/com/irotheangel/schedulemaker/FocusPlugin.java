@@ -1,7 +1,10 @@
 package com.irotheangel.schedulemaker;
 
+import android.app.AppOpsManager;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
+import android.os.Build;
+import android.os.Process;
+import androidx.core.content.ContextCompat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -73,36 +76,56 @@ public class FocusPlugin extends Plugin {
             // keep whatever was collected
         }
         prefs().edit().putBoolean("active", true).putLong("until", until).putString("apps", sb.toString()).apply();
+        try {
+            ContextCompat.startForegroundService(getContext(), new Intent(getContext(), BlockerService.class));
+        } catch (Exception e) {
+            call.reject("Could not start focus: " + e.getMessage());
+            return;
+        }
         call.resolve();
     }
 
     @PluginMethod
     public void stop(PluginCall call) {
         prefs().edit().putBoolean("active", false).apply();
+        getContext().stopService(new Intent(getContext(), BlockerService.class));
         call.resolve();
     }
 
     @PluginMethod
     public void isEnabled(PluginCall call) {
+        boolean usage = usageAllowed();
+        boolean overlay = Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(getContext());
         JSObject r = new JSObject();
-        r.put("enabled", accessibilityOn());
+        r.put("usage", usage);
+        r.put("overlay", overlay);
+        r.put("enabled", usage && overlay);
         call.resolve(r);
     }
 
-    private boolean accessibilityOn() {
-        String enabled = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-        if (enabled == null) return false;
-        String me = new ComponentName(getContext(), FocusService.class).flattenToString();
-        String meShort = new ComponentName(getContext(), FocusService.class).flattenToShortString();
-        for (String s : enabled.split(":")) {
-            if (s.equalsIgnoreCase(me) || s.equalsIgnoreCase(meShort)) return true;
+    private boolean usageAllowed() {
+        AppOpsManager ops = (AppOpsManager) getContext().getSystemService(Context.APP_OPS_SERVICE);
+        if (ops == null) return false;
+        int mode;
+        if (Build.VERSION.SDK_INT >= 29) {
+            mode = ops.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), getContext().getPackageName());
+        } else {
+            mode = ops.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), getContext().getPackageName());
         }
-        return false;
+        return mode == AppOpsManager.MODE_ALLOWED;
     }
 
     @PluginMethod
-    public void openAccessibilitySettings(PluginCall call) {
-        Intent i = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+    public void openUsageSettings(PluginCall call) {
+        Intent i = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getContext().startActivity(i);
+        call.resolve();
+    }
+
+    @PluginMethod
+    public void openOverlaySettings(PluginCall call) {
+        Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getContext().getPackageName()));
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getContext().startActivity(i);
         call.resolve();

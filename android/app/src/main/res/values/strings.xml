@@ -4,5 +4,4 @@
     <string name="title_activity_main">Schedule Maker</string>
     <string name="package_name">com.irotheangel.schedulemaker</string>
     <string name="custom_url_scheme">com.irotheangel.schedulemaker</string>
-    <string name="focus_service_description">Lets Schedule Maker send you back to your task when you open a blocked app (like YouTube or TikTok) during focus mode. It only checks which app is open, and only while focus is on.</string>
 </resources>
